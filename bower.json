@@ -15,7 +15,6 @@
     "tests"
   ],
   "dependencies": {
-    "parse": "~1.6.7",
-    "js-motion-detection": "*"
+    "parse": "~1.6.7"
   }
 }
