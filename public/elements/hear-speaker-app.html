@@ -1,0 +1,53 @@
+<link rel="import" href="/bower_components/paper-header-panel/paper-header-panel.html">
+
+<link rel="import" href="hear-speaker-toolbar.html">
+<link rel="import" href="hear-speaker-login.html">
+
+<dom-module id="hear-speaker-app">
+  <template>
+
+    <style is="custom-style">
+      :host {
+        display: block;
+        font-family: tondo, sans-serif;
+        --hear-primary-color: #d31c5b;
+        --hear-secondary-color: #488fcc;
+        --hear-title-font: tondo-signage, sans-serif;
+        --hear-paragraph-font: tondo, sans-serif;
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+      }
+
+      .paper-header {
+        font-family: var(--hear-title-font);
+        color: var(--hear-primary-color);
+        text-align: center;
+      }
+
+      .paper-header span {
+        color: var(--hear-secondary-color);
+      }
+
+      .content {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+    </style>
+
+    <paper-header-panel class="flex" mode="seamed">
+      <h1 class="paper-header">hear<span>speaker</span></h1>
+      <div class="content">
+        <hear-speaker-login></hear-speaker-login>
+      </div>
+    </paper-header-panel>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'hear-speaker-app'
+    });
+  </script>
+  <script src="https://use.typekit.net/rjl4pzk.js"></script>
+  <script>try{Typekit.load({ async: true });}catch(e){}</script>
+</dom-module>

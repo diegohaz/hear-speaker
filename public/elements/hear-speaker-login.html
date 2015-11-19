@@ -1,0 +1,53 @@
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+<dom-module id="hear-speaker-login">
+  <template>
+    <style is="custom-style">
+      :host {
+        display: block;
+        width: 280px;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+
+      paper-input {
+        width: 100%;
+      }
+
+      .login-options {
+        text-align: center;
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      .login-options a {
+        color: var(--hear-secondary-color);
+        line-height: 150%;
+      }
+
+      paper-button {
+        background-color: var(--hear-primary-color);
+        color: #fff;
+        margin-top: 20px;
+      }
+    </style>
+
+    <paper-input label="E-mail" auto-validate pattern="[a-zA-Z0-9\-_\.]+@[a-zA-Z0-9\-_\.]+" error-message="Invalid email" required></paper-input>
+    <paper-input label="Password" type="password" auto-validate error-message="Empty password" required></paper-input>
+
+    <paper-button raised>Login</paper-button>
+
+    <ul class="login-options">
+      <li><a href="#">Forgot password</a></li>
+      <li><a href="#">Register</a></li>
+    </ul>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'hear-speaker-login'
+    });
+  </script>
+</dom-module>
