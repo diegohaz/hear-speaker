@@ -1,3 +1,4 @@
+<script src="/bower_components/underscore/underscore-min.js"></script>
 <script src="/bower_components/parse/parse.min.js"></script>
 <script>Parse.initialize("rReEmIsGdLSxl6BrgMX9bxNvPAEZONELtGutJmot", "hD1Sa86Qfphb21P3mjoINWqEkIdlsrbGH20o7X0M")</script>
 
@@ -20,6 +21,8 @@
         --hear-title-font: tondo-signage, sans-serif;
         --hear-paragraph-font: tondo, sans-serif;
         --paper-button: {
+          background-color: var(--hear-primary-color);
+          color: #fff;
           font-family: var(--hear-title-font);
         };
         @apply(--layout-flex);

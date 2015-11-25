@@ -1,11 +1,10 @@
-<link rel="import" href="/bower_components/paper-input/paper-input.html">
-<link rel="import" href="/bower_components/paper-card/paper-card.html">
-<link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
 <link rel="import" href="/bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="/bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="/bower_components/neon-animation/animations/scale-up-animation.html">
 <link rel="import" href="/bower_components/neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="hear-speaker-list.html">
+<link rel="import" href="hear-speaker-new.html">
 
 <dom-module id="hear-speaker-dashboard">
   <template>
@@ -17,47 +16,58 @@
         };
       }
 
-      paper-card {
+      hear-speaker-list {
         min-width: 304px;
         max-width: 480px;
         width: calc(100vw - 16px);
         margin: 8px;
       }
 
-      paper-dialog {
+      hear-speaker-new {
         width: 304px;
       }
     </style>
 
-    <paper-card heading="speakers" elevation="1" animated-shadow="false">
-      <paper-fab mini icon="add"></paper-fab>
-      <div class="card-content">
-        <paper-item>oi</paper-item>
-      </div>
-      <div class="card-actions">
-        <paper-button on-click="openDialog">
-          <iron-icon icon="add"></iron-icon>Add speaker
-        </paper-button>
-      </div>
-    </paper-card>
+    <hear-speaker-list speakers="{{speakers}}"></hear-speaker-list>
+    <paper-button on-click="openDialog" raised><iron-icon icon="add"></iron-icon>New speaker</paper-button>
 
-    <paper-dialog id="addSpeaker" with-backdrop="true" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
-      <h2>new speaker</h2>
-      <paper-input label="UUID" error-message="Empty UUID" required auto-validate></paper-input>
-      <paper-input label="Place name" error-message="Empty place name" placeholder="Ex: John's Store" required auto-validate></paper-input>
-      <div class="buttons">
-        <paper-button dialog-dismiss><iron-icon icon="close"></iron-icon>Cancel</paper-button>
-        <paper-button><iron-icon icon="done"></iron-icon>Done</paper-button>
-      </div>
-    </paper-dialog>
+    <hear-speaker-new id="newSpeakerDialog" with-backdrop="true" entry-animation="scale-up-animation" exit-animation="fade-out-animation" on-new-speaker-saved="newSpeakerSaved"></paper-speaker-dialog>
 
   </template>
   <script>
     Polymer({
       is: 'hear-speaker-dashboard',
 
+      ready: function() {
+        var speakers = new Parse.Query('Beacon');
+
+        speakers.equalTo('user', Parse.User.current());
+        speakers.find().then(function(speakers) {
+          this.speakers = _.map(speakers, function(speaker) {
+            return {
+              id: speaker.id,
+              uuid: speaker.get('uuid'),
+              name: speaker.get('name')
+            };
+          });
+        }.bind(this));
+      },
+
       openDialog: function() {
-        this.$.addSpeaker.open();
+        this.$.newSpeakerDialog.open();
+        this.$.newSpeakerDialog.reset();
+      },
+
+      newSpeakerSaved: function(event) {
+        this.$.newSpeakerDialog.close();
+
+        var speaker = {
+          id: event.detail.id,
+          uuid: event.detail.get('uuid'),
+          name: event.detail.get('name')
+        };
+
+        this.push('speakers', speaker);
       }
     });
   </script>

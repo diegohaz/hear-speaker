@@ -1,0 +1,101 @@
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="/bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="/bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+<link rel="import" href="/bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<dom-module id="hear-speaker-new">
+  <template>
+    <style include="paper-dialog-shared-styles"></style>
+
+    <iron-a11y-keys target="[[target]]" keys="enter" on-keys-pressed="done"></iron-a11y-keys>
+
+    <h2>new speaker</h2>
+
+    <paper-input
+      id="uuidInput"
+      label="UUID"
+      error-message="Empty UUID"
+      value="{{uuid}}"
+      required
+      auto-validate>
+    </paper-input>
+
+    <paper-input
+      id="placeInput"
+      label="Place name"
+      error-message="Empty place name"
+      placeholder="Ex: John's Store"
+      value="{{place}}"
+      required
+      auto-validate>
+    </paper-input>
+
+    <div class="buttons">
+      <paper-button dialog-dismiss><iron-icon icon="close"></iron-icon>Cancel</paper-button>
+      <paper-button on-click="done"><iron-icon icon="done"></iron-icon>Done</paper-button>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'hear-speaker-new',
+      behaviors: [
+        Polymer.PaperDialogBehavior,
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      listeners: {
+        'neon-animation-finish': '_onNeonAnimationFinish'
+      },
+
+      reset: function() {
+        this.uuid = '';
+        this.place = '';
+        this.$.uuidInput.invalid = false;
+        this.$.placeInput.invalid = false;
+      },
+
+      done: function() {
+        var uuidInput = this.$.uuidInput;
+        var placeInput = this.$.placeInput;
+
+        if (uuidInput.validate() && placeInput.validate()) {
+          var beacon = new Parse.Object('Beacon');
+
+          beacon.set('user', Parse.User.current());
+          beacon.set('uuid', this.uuid);
+          beacon.set('name', this.place);
+
+          beacon.save().then(function() {
+            this.fire('new-speaker-saved', beacon);
+          }.bind(this));
+        }
+      },
+
+      _renderOpened: function() {
+        if (this.withBackdrop) {
+          this.backdropElement.open();
+        }
+        this.playAnimation('entry');
+      },
+
+      _renderClosed: function() {
+        if (this.withBackdrop) {
+          this.backdropElement.close();
+        }
+        this.playAnimation('exit');
+      },
+
+      _onNeonAnimationFinish: function() {
+        if (this.opened) {
+          this._finishRenderOpened();
+        } else {
+          this._finishRenderClosed();
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,42 @@
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/iron-icons/av-icons.html">
+
+<dom-module id="hear-speaker-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <template is="dom-repeat" items="{{speakers}}" as="speaker">
+      <paper-item>
+        <div class="name flex">{{speaker.name}}</div>
+        <div class="options">
+          <paper-icon-button icon="av:play-arrow"></paper-icon-button>
+          <paper-icon-button icon="delete" on-click="remove"></paper-icon-button>
+        </div>
+      </paper-item>
+    </template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'hear-speaker-list',
+
+      properties: {
+        speakers: Array
+      },
+
+      remove: function(e) {
+        var speaker = e.model.__data__.speaker;
+        var beacon = new Parse.Object('Beacon');
+        beacon.id = speaker.id;
+        beacon.destroy();
+
+        this.splice('speakers', this.speakers.indexOf(speaker), 1);
+      }
+    });
+  </script>
+</dom-module>

@@ -22,6 +22,7 @@
     "app-router": "~2.6.1",
     "pushstate-anchor": "~0.3.2",
     "iron-a11y-keys": "PolymerElements/iron-a11y-keys#~1.0.4",
-    "neon-animation": "PolymerElements/neon-animation#~1.0.8"
+    "neon-animation": "PolymerElements/neon-animation#~1.0.8",
+    "underscore": "~1.8.3"
   }
 }
