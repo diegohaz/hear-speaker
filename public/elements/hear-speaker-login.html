@@ -1,5 +1,9 @@
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
 <link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/pushstate-anchor/pushstate-anchor.html">
+<link rel="import" href="/bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import" href="/bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
 
 <dom-module id="hear-speaker-login">
   <template>
@@ -30,24 +34,70 @@
       paper-button {
         background-color: var(--hear-primary-color);
         color: #fff;
-        margin-top: 20px;
+        margin-top: 40px;
+      }
+
+      paper-spinner {
+        margin-top: 40px;
       }
     </style>
 
-    <paper-input label="E-mail" auto-validate pattern="[a-zA-Z0-9\-_\.]+@[a-zA-Z0-9\-_\.]+" error-message="Invalid email" required></paper-input>
-    <paper-input label="Password" type="password" auto-validate error-message="Empty password" required></paper-input>
+    <iron-a11y-keys target="[[target]]" keys="enter" on-keys-pressed="login"></iron-a11y-keys>
+    <paper-toast id="toast" text="Wrong email or password"></paper-toast>
 
-    <paper-button raised>Login</paper-button>
+    <paper-input
+      id="emailInput"
+      label="E-mail"
+      pattern="[a-zA-Z0-9\-_\.]+@[a-zA-Z0-9\-_\.]+"
+      error-message="Invalid email"
+      value="{{email}}"
+      auto-validate
+      required>
+    </paper-input>
+
+    <paper-input
+      id="passwordInput"
+      label="Password"
+      type="password"
+      error-message="Empty password"
+      value="{{password}}"
+      auto-validate
+      required>
+    </paper-input>
+
+    <paper-button id="loginButton" raised on-click="login">Login</paper-button>
+    <paper-spinner id="spinner" active hidden></paper-spinner>
 
     <ul class="login-options">
-      <li><a href="#">Forgot password</a></li>
-      <li><a href="#">Register</a></li>
+      <li><a is="pushstate-anchor" href="/register">Register</a></li>
     </ul>
 
   </template>
   <script>
     Polymer({
-      is: 'hear-speaker-login'
+      is: 'hear-speaker-login',
+
+      login: function() {
+        var emailInput = this.$.emailInput;
+        var passwordInput = this.$.passwordInput;
+        var loginButton = this.$.loginButton;
+        var spinner = this.$.spinner;
+        var toast = this.$.toast;
+
+        if (emailInput.validate() && passwordInput.validate()) {
+          loginButton.hidden = true;
+          spinner.hidden = false;
+
+          Parse.User.logIn(this.email, this.password).then(function() {
+            location.pathname = "/";
+          }, function(error) {
+            toast.show();
+          }).always(function() {
+            loginButton.hidden = false;
+            spinner.hidden = true;
+          });
+        }
+      }
     });
   </script>
 </dom-module>

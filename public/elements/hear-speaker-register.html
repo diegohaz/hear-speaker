@@ -6,13 +6,89 @@
     <style>
       :host {
         display: block;
+        width: 280px;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
+
+      paper-input {
+        width: 100%;
+      }
+
+      paper-button {
+        background-color: var(--hear-primary-color);
+        color: #fff;
+        margin-top: 40px;
       }
     </style>
+
+    <paper-input
+      id="emailInput"
+      label="E-mail"
+      pattern="[a-zA-Z0-9\-_\.]+@[a-zA-Z0-9\-_\.]+\.[a-zA-Z0-9\-_\.]+"
+      error-message="Invalid email"
+      value="{{email}}"
+      onblur="validate()"
+      required
+    ></paper-input>
+
+    <paper-input
+      id="passwordInput"
+      label="Password"
+      type="password"
+      error-message="Empty password"
+      value="{{password}}"
+      auto-validate
+      required>
+    </paper-input>
+
+    <paper-input
+      id="rePasswordInput"
+      label="Re-enter password"
+      type="password"
+      error-message="Password doesn't match"
+      value="{{rePassword}}"
+      auto-validate
+      required
+    ></paper-input>
+
+    <paper-button raised on-click="register">Register</paper-button>
 
   </template>
   <script>
     Polymer({
-      is: 'hear-speaker-register'
+      is: 'hear-speaker-register',
+
+      register: function() {
+        var emailInput = this.$.emailInput;
+        var passwordInput = this.$.passwordInput;
+        var rePasswordInput = this.$.rePasswordInput;
+
+        if (this.email && !emailInput.invalid
+        && this.password && !passwordInput.invalid
+        && this.rePassword && !rePasswordInput.invalid) {
+          if (this.rePassword == this.password) {
+            this.signUp(this.email, this.password);
+          } else {
+            this.rePassword = "";
+          }
+        } else {
+          emailInput.validate();
+          passwordInput.validate();
+          rePasswordInput.validate();
+        }
+      },
+
+      signUp: function(email, password) {
+        Parse.User.signUp(email, password).then(function(user) {
+          var user = Parse.User.current();
+
+          user.setEmail(email);
+          user.save();
+        }, function(error) {
+          console.log(error);
+        });
+      }
     });
   </script>
 </dom-module>

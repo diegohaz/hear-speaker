@@ -1,7 +1,12 @@
-<link rel="import" href="/bower_components/paper-header-panel/paper-header-panel.html">
+<script src="/bower_components/parse/parse.min.js"></script>
+<script>Parse.initialize("rReEmIsGdLSxl6BrgMX9bxNvPAEZONELtGutJmot", "hD1Sa86Qfphb21P3mjoINWqEkIdlsrbGH20o7X0M")</script>
 
-<link rel="import" href="hear-speaker-toolbar.html">
+<link rel="import" href="/bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="/bower_components/app-router/app-router.html">
+<link rel="import" href="/bower_components/pushstate-anchor/pushstate-anchor.html">
+
 <link rel="import" href="hear-speaker-login.html">
+<link rel="import" href="hear-speaker-register.html">
 
 <dom-module id="hear-speaker-app">
   <template>
@@ -14,14 +19,21 @@
         --hear-secondary-color: #488fcc;
         --hear-title-font: tondo-signage, sans-serif;
         --hear-paragraph-font: tondo, sans-serif;
+        --paper-button: {
+          font-family: var(--hear-title-font);
+        };
         @apply(--layout-flex);
         @apply(--layout-vertical);
       }
 
       .paper-header {
+        text-align: center;
+      }
+
+      .paper-header a {
         font-family: var(--hear-title-font);
         color: var(--hear-primary-color);
-        text-align: center;
+        text-decoration: none;
       }
 
       .paper-header span {
@@ -35,9 +47,15 @@
     </style>
 
     <paper-header-panel class="flex" mode="seamed">
-      <h1 class="paper-header">hear<span>speaker</span></h1>
+      <h1 class="paper-header"><a href="/">hear<span>speaker</span></a></h1>
       <div class="content">
-        <hear-speaker-login></hear-speaker-login>
+        <app-router id="router" mode="pushstate" trailingSlash="ignore">
+
+          <app-route path="/dashboard" import="/elements/hear-speaker-dashboard.html"></app-route>
+          <app-route path="/login" import="/elements/hear-speaker-login.html"></app-route>
+          <app-route path="/register" import="/elements/hear-speaker-register.html"></app-route>
+
+        </app-router>
       </div>
     </paper-header-panel>
 
@@ -45,7 +63,19 @@
 
   <script>
     Polymer({
-      is: 'hear-speaker-app'
+      is: 'hear-speaker-app',
+
+      ready: function() {
+        var router = this.$.router;
+
+        if (Parse.User.current()) {
+          router.go('/dashboard');
+        } else if (location.pathname == '/dashboard' && !Parse.User.current()) {
+          location.pathname = '/';
+        } else if (location.pathname == '/') {
+          router.go('/login');
+        }
+      }
     });
   </script>
   <script src="https://use.typekit.net/rjl4pzk.js"></script>
