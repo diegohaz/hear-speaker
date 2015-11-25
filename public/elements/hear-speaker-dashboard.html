@@ -27,8 +27,9 @@
         width: 304px;
       }
     </style>
+    <audio id="audio" src="{{song.previewUrl}}"></audio>
 
-    <hear-speaker-list speakers="{{speakers}}"></hear-speaker-list>
+    <hear-speaker-list speakers="{{speakers}}" on-play="play" on-stop="stop"></hear-speaker-list>
     <paper-button on-click="openDialog" raised><iron-icon icon="add"></iron-icon>New speaker</paper-button>
 
     <hear-speaker-new id="newSpeakerDialog" with-backdrop="true" entry-animation="scale-up-animation" exit-animation="fade-out-animation" on-new-speaker-saved="newSpeakerSaved"></paper-speaker-dialog>
@@ -37,6 +38,8 @@
   <script>
     Polymer({
       is: 'hear-speaker-dashboard',
+      song: false,
+      motion: false,
 
       ready: function() {
         var speakers = new Parse.Query('Beacon');
@@ -50,6 +53,16 @@
               name: speaker.get('name')
             };
           });
+        }.bind(this));
+
+        document.addEventListener('motion', function(e) {
+          this.motion = e.detail;
+
+          if (this.motion && this.song) {
+            this.$.audio.play();
+          } else if (this.song) {
+            this.$.audio.pause();
+          }
         }.bind(this));
       },
 
@@ -68,6 +81,16 @@
         };
 
         this.push('speakers', speaker);
+      },
+
+      play: function(e) {
+        this.song = e.detail;
+        this.$.audio.play();
+      },
+
+      stop: function() {
+        this.$.audio.pause();
+        this.song = null;
       }
     });
   </script>

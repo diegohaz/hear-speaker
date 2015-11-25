@@ -23,6 +23,8 @@
     "pushstate-anchor": "~0.3.2",
     "iron-a11y-keys": "PolymerElements/iron-a11y-keys#~1.0.4",
     "neon-animation": "PolymerElements/neon-animation#~1.0.8",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "motion-detection": "diegohaz/motion-detection",
+    "paper-audio-player": "~0.1.1"
   }
 }

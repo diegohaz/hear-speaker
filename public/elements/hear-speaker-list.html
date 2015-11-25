@@ -1,3 +1,4 @@
+<link rel="import" href="/bower_components/motion-detection/motion-detection.html">
 <link rel="import" href="/bower_components/paper-item/paper-item.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/iron-icons/av-icons.html">
@@ -14,7 +15,7 @@
       <paper-item>
         <div class="name flex">{{speaker.name}}</div>
         <div class="options">
-          <paper-icon-button icon="av:play-arrow"></paper-icon-button>
+          <paper-icon-button icon="av:play-arrow" on-click="play"></paper-icon-button>
           <paper-icon-button icon="delete" on-click="remove"></paper-icon-button>
         </div>
       </paper-item>
@@ -26,7 +27,36 @@
       is: 'hear-speaker-list',
 
       properties: {
-        speakers: Array
+        speakers: Array,
+        playing: Object
+      },
+
+      ready: function() {
+        var motion = new MotionDetector.Core();
+      },
+
+      play: function(e) {
+        var speaker = e.model.__data__.speaker;
+
+        if (this.playing && this.playing.id == speaker.id) {
+          this.fire('stop');
+          this.playing = null;
+          e.target.icon = 'av:play-arrow';
+          return;
+        }
+
+        var params = {
+          beaconUUID: speaker.uuid,
+          limit: 1
+        };
+
+        Parse.Cloud.run('listPlacedSongsByBeacon', params).then(function(songs) {
+          if (songs.length == 0) return;
+
+          this.fire('play', songs[0]);
+          this.playing = speaker;
+          e.target.icon = 'av:stop';
+        }.bind(this));
       },
 
       remove: function(e) {
